@@ -221,8 +221,8 @@ def chaos_loop():
             print(f"Erreur action {action}: {e}")
         
         if running:
-            # Temps aléatoire entre 1 et 10 minutes
-            wait_time = random.randint(60, 600)
+            # Temps aléatoire entre 30 secondes et 3 minutes
+            wait_time = random.randint(30, 180)
             minutes = wait_time // 60
             secondes = wait_time % 60
             print(f"\n⏰ Prochaine action dans {minutes}m {secondes}s...")
@@ -295,7 +295,7 @@ def main():
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
     print("Actions: Fermeture / Déplacement fenêtres / Curseur / Écran noir / Sites aléatoires / Icônes bureau")
-    print("Délai: Aléatoire entre 1 et 10 minutes")
+    print("Délai: Aléatoire entre 30 secondes et 3 minutes")
     print("Sites: Google, YouTube, Tukif")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
