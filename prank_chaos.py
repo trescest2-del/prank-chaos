@@ -18,20 +18,33 @@ stop_window = None
 user32 = ctypes.windll.user32
 HWND_TOP = 0
 
+# Définir les bonnes fonctions Windows
+GetWindowTextLengthW = user32.GetWindowTextLengthW
+GetWindowTextW = user32.GetWindowTextW
+GetWindowRect = user32.GetWindowRect
+SetWindowPos = user32.SetWindowPos
+SetForegroundWindow = user32.SetForegroundWindow
+PostMessageW = user32.PostMessageW
+IsWindowVisible = user32.IsWindowVisible
+EnumWindows = user32.EnumWindows
+
 def get_all_windows():
     """Récupère toutes les fenêtres ouvertes"""
     windows = []
     def enum_windows(hwnd, lParam):
-        if user32.IsWindowVisible(hwnd):
-            length = user32.GetWindowTextLength(hwnd)
-            if length > 0:
-                buff = ctypes.create_unicode_buffer(length + 1)
-                user32.GetWindowTextW(hwnd, buff, length + 1)
-                windows.append((hwnd, buff.value))
+        try:
+            if IsWindowVisible(hwnd):
+                length = GetWindowTextLengthW(hwnd)
+                if length > 0:
+                    buff = ctypes.create_unicode_buffer(length + 1)
+                    GetWindowTextW(hwnd, buff, length + 1)
+                    windows.append((hwnd, buff.value))
+        except:
+            pass
         return True
     
     enum_func = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
-    user32.EnumWindows(enum_func(enum_windows), 0)
+    EnumWindows(enum_func(enum_windows), 0)
     return windows
 
 def save_window_positions():
@@ -42,7 +55,7 @@ def save_window_positions():
     for hwnd, title in windows:
         if title and len(title) > 0 and "STOP PRANK" not in title:
             rect = wintypes.RECT()
-            user32.GetWindowRect(hwnd, ctypes.byref(rect))
+            GetWindowRect(hwnd, ctypes.byref(rect))
             app_positions[hwnd] = {
                 'title': title,
                 'left': rect.left,
@@ -60,7 +73,7 @@ def close_random_window():
             safe_windows = [w for w in windows if "STOP PRANK" not in w[1] and w[1] != ""]
             if safe_windows:
                 hwnd, title = random.choice(safe_windows)
-                user32.PostMessageW(hwnd, 0x0010, 0, 0)  # WM_CLOSE
+                PostMessageW(hwnd, 0x0010, 0, 0)  # WM_CLOSE
                 print(f"✓ Fenêtre fermée: {title}")
     except Exception as e:
         print(f"Erreur fermeture: {e}")
@@ -79,11 +92,11 @@ def move_random_window():
                 height = 600
                 
                 # Force la fenêtre à l'avant
-                user32.SetForegroundWindow(hwnd)
+                SetForegroundWindow(hwnd)
                 time.sleep(0.2)
                 
                 # Bouge la fenêtre avec SetWindowPos
-                user32.SetWindowPos(hwnd, HWND_TOP, x, y, width, height, 0x0040)
+                SetWindowPos(hwnd, HWND_TOP, x, y, width, height, 0x0040)
                 print(f"✓ Fenêtre bougée: {title} à ({x}, {y})")
                 time.sleep(0.5)
     except Exception as e:
@@ -176,7 +189,7 @@ def restore_windows():
                 width = right - left
                 height = bottom - top
                 
-                user32.SetWindowPos(hwnd, HWND_TOP, left, top, width, height, 0x0040)
+                SetWindowPos(hwnd, HWND_TOP, left, top, width, height, 0x0040)
                 print(f"✓ Restauré: {info['title']}")
                 time.sleep(0.5)
             except:
