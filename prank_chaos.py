@@ -173,13 +173,19 @@ def black_screen():
     except Exception as e:
         print(f"Erreur écran noir: {e}")
 
-def open_google():
-    """Ouvre Google dans le navigateur"""
+def open_random_site():
+    """Ouvre un site aléatoire"""
     try:
-        print("✓ Ouverture de Google...")
-        os.startfile("https://www.google.com")
+        sites = [
+            "https://www.google.com",
+            "https://www.youtube.com",
+            "https://www.tukif.com"
+        ]
+        site = random.choice(sites)
+        print(f"✓ Ouverture de {site}...")
+        os.startfile(site)
     except Exception as e:
-        print(f"Erreur Google: {e}")
+        print(f"Erreur ouverture site: {e}")
 
 def chaos_loop():
     """Boucle principale du chaos"""
@@ -188,7 +194,7 @@ def chaos_loop():
     save_window_positions()
     
     # Liste des actions possibles
-    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger fenêtres, 3=curseur, 4=écran noir, 5=Google, 6=icônes
+    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger fenêtres, 3=curseur, 4=écran noir, 5=sites aléatoires, 6=icônes
     actions_to_do = all_actions.copy()
     
     while running:
@@ -208,16 +214,18 @@ def chaos_loop():
             elif action == 4 and running:
                 black_screen()
             elif action == 5 and running:
-                open_google()
+                open_random_site()
             elif action == 6 and running:
                 move_desktop_icons()
         except Exception as e:
             print(f"Erreur action {action}: {e}")
         
         if running:
-            # 10 secondes pour tester
-            wait_time = 10
-            print(f"\n⏰ Prochaine action dans {wait_time} secondes...")
+            # Temps aléatoire entre 1 et 10 minutes
+            wait_time = random.randint(60, 600)
+            minutes = wait_time // 60
+            secondes = wait_time % 60
+            print(f"\n⏰ Prochaine action dans {minutes}m {secondes}s...")
             time.sleep(wait_time)
 
 def restore_windows():
@@ -286,8 +294,9 @@ def main():
     print("=" * 50)
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
-    print("Actions: Fermeture / Déplacement fenêtres / Curseur / Écran noir / Google / Icônes bureau")
-    print("Délai: 10 secondes entre chaque action (TEST)")
+    print("Actions: Fermeture / Déplacement fenêtres / Curseur / Écran noir / Sites aléatoires / Icônes bureau")
+    print("Délai: Aléatoire entre 1 et 10 minutes")
+    print("Sites: Google, YouTube, Tukif")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
     print()
