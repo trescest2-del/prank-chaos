@@ -4,7 +4,6 @@ from tkinter import messagebox
 import threading
 import time
 import random
-import subprocess
 import ctypes
 from ctypes import wintypes
 import os
@@ -102,6 +101,49 @@ def move_random_window():
     except Exception as e:
         print(f"Erreur déplacement: {e}")
 
+def move_desktop_icons():
+    """Bouge les icônes du bureau"""
+    try:
+        print("✓ Icônes du bureau en chaos pendant 5 secondes...")
+        pyautogui.FAILSAFE = False
+        
+        # Positions aléatoires pour les icônes
+        positions = [
+            (100, 100), (200, 100), (300, 100), (400, 100),
+            (100, 200), (200, 200), (300, 200), (400, 200),
+            (100, 300), (200, 300), (300, 300), (400, 300),
+        ]
+        
+        start_time = time.time()
+        while time.time() - start_time < 5 and running:
+            for _ in range(3):
+                if not running:
+                    break
+                    
+                # Clique sur une icône aléatoire
+                x = random.randint(50, 300)
+                y = random.randint(50, 250)
+                
+                # Clique droit pour le menu contextuel
+                pyautogui.rightClick(x, y, duration=0.1)
+                time.sleep(0.3)
+                
+                # Clique ailleurs pour fermer le menu
+                pyautogui.click(800, 400, duration=0.1)
+                time.sleep(0.2)
+                
+                # Glisse les icônes
+                start_x = random.randint(50, 300)
+                start_y = random.randint(50, 250)
+                end_x = random.randint(50, 1000)
+                end_y = random.randint(50, 600)
+                
+                pyautogui.drag(end_x - start_x, end_y - start_y, duration=0.5, _pause=False)
+                time.sleep(0.3)
+                
+    except Exception as e:
+        print(f"Erreur icônes: {e}")
+
 def move_cursor():
     """Bouge le curseur pendant 3 secondes"""
     try:
@@ -146,7 +188,7 @@ def chaos_loop():
     save_window_positions()
     
     # Liste des actions possibles
-    all_actions = [1, 2, 3, 4, 5]  # 1=fermer, 2=bouger, 3=curseur, 4=écran noir, 5=Google
+    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger fenêtres, 3=curseur, 4=écran noir, 5=Google, 6=icônes
     actions_to_do = all_actions.copy()
     
     while running:
@@ -167,6 +209,8 @@ def chaos_loop():
                 black_screen()
             elif action == 5 and running:
                 open_google()
+            elif action == 6 and running:
+                move_desktop_icons()
         except Exception as e:
             print(f"Erreur action {action}: {e}")
         
@@ -242,7 +286,7 @@ def main():
     print("=" * 50)
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
-    print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google")
+    print("Actions: Fermeture / Déplacement fenêtres / Curseur / Écran noir / Google / Icônes bureau")
     print("Délai: 10 secondes entre chaque action (TEST)")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
