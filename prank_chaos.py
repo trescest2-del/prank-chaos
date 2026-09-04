@@ -159,9 +159,9 @@ def chaos_loop():
             print(f"Erreur action {action}: {e}")
         
         if running:
-            # 3 minutes = 180 secondes
-            wait_time = 180
-            print(f"\n⏰ Prochaine action dans {wait_time} secondes (3 minutes)...")
+            # 10 secondes pour tester
+            wait_time = 10
+            print(f"\n⏰ Prochaine action dans {wait_time} secondes...")
             time.sleep(wait_time)
 
 def restore_windows():
@@ -231,7 +231,7 @@ def main():
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
     print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google / Notifications")
-    print("Délai: 3 minutes entre chaque action")
+    print("Délai: 10 secondes entre chaque action (TEST)")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
     print()
