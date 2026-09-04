@@ -13,7 +13,6 @@ import os
 running = True
 app_positions = {}
 stop_window = None
-discord_closed = False
 
 # API Windows pour bouger les fenêtres
 user32 = ctypes.windll.user32
@@ -83,8 +82,8 @@ def move_random_window():
                 user32.SetForegroundWindow(hwnd)
                 time.sleep(0.2)
                 
-                # Bouge la fenêtre
-                user32.MoveWindow(hwnd, x, y, width, height, True)
+                # Bouge la fenêtre avec SetWindowPos
+                user32.SetWindowPos(hwnd, HWND_TOP, x, y, width, height, 0x0040)
                 print(f"✓ Fenêtre bougée: {title} à ({x}, {y})")
                 time.sleep(0.5)
     except Exception as e:
@@ -127,20 +126,6 @@ def open_google():
     except Exception as e:
         print(f"Erreur Google: {e}")
 
-def quit_discord_call():
-    """Quitte l'appel Discord (une seule fois)"""
-    global discord_closed
-    if not discord_closed:
-        try:
-            print("✓ Tentative de quitter l'appel Discord...")
-            # Alt+Q pour quitter l'appel
-            pyautogui.hotkey('alt', 'q')
-            time.sleep(0.5)
-            discord_closed = True
-            print("✓ Appel Discord fermé!")
-        except Exception as e:
-            print(f"Erreur Discord: {e}")
-
 def chaos_loop():
     """Boucle principale du chaos"""
     global running
@@ -148,7 +133,7 @@ def chaos_loop():
     save_window_positions()
     
     # Liste des actions possibles
-    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger, 3=curseur, 4=écran noir, 5=Google, 6=Discord
+    all_actions = [1, 2, 3, 4, 5]  # 1=fermer, 2=bouger, 3=curseur, 4=écran noir, 5=Google
     actions_to_do = all_actions.copy()
     
     while running:
@@ -169,8 +154,6 @@ def chaos_loop():
                 black_screen()
             elif action == 5 and running:
                 open_google()
-            elif action == 6 and running:
-                quit_discord_call()
         except Exception as e:
             print(f"Erreur action {action}: {e}")
         
@@ -193,7 +176,7 @@ def restore_windows():
                 width = right - left
                 height = bottom - top
                 
-                user32.MoveWindow(hwnd, left, top, width, height, True)
+                user32.SetWindowPos(hwnd, HWND_TOP, left, top, width, height, 0x0040)
                 print(f"✓ Restauré: {info['title']}")
                 time.sleep(0.5)
             except:
@@ -246,7 +229,7 @@ def main():
     print("=" * 50)
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
-    print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google / Discord")
+    print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google")
     print("Délai: 10 secondes entre chaque action (TEST)")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
