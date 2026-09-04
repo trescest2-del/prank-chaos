@@ -13,6 +13,7 @@ import os
 running = True
 app_positions = {}
 stop_window = None
+discord_closed = False
 
 # API Windows pour bouger les fenêtres
 user32 = ctypes.windll.user32
@@ -73,10 +74,19 @@ def move_random_window():
             safe_windows = [w for w in windows if "STOP PRANK" not in w[1] and w[1] != ""]
             if safe_windows:
                 hwnd, title = random.choice(safe_windows)
-                x = random.randint(100, 1400)
-                y = random.randint(100, 700)
-                user32.SetWindowPos(hwnd, HWND_TOP, x, y, 600, 400, 0)
+                x = random.randint(50, 1300)
+                y = random.randint(50, 600)
+                width = 800
+                height = 600
+                
+                # Force la fenêtre à l'avant
+                user32.SetForegroundWindow(hwnd)
+                time.sleep(0.2)
+                
+                # Bouge la fenêtre
+                user32.MoveWindow(hwnd, x, y, width, height, True)
                 print(f"✓ Fenêtre bougée: {title} à ({x}, {y})")
+                time.sleep(0.5)
     except Exception as e:
         print(f"Erreur déplacement: {e}")
 
@@ -117,13 +127,19 @@ def open_google():
     except Exception as e:
         print(f"Erreur Google: {e}")
 
-def show_virus_notification():
-    """Affiche une notification VIRUS"""
-    try:
-        print("✓ Notification VIRUS affichée!")
-        messagebox.showwarning("⚠️ VIRUS DÉTECTÉ!", "VIRUS TROUVÉ!\n\nTon PC est hacké! 😂\n\n(C'est juste un prank!)")
-    except Exception as e:
-        print(f"Erreur notification: {e}")
+def quit_discord_call():
+    """Quitte l'appel Discord (une seule fois)"""
+    global discord_closed
+    if not discord_closed:
+        try:
+            print("✓ Tentative de quitter l'appel Discord...")
+            # Alt+Q pour quitter l'appel
+            pyautogui.hotkey('alt', 'q')
+            time.sleep(0.5)
+            discord_closed = True
+            print("✓ Appel Discord fermé!")
+        except Exception as e:
+            print(f"Erreur Discord: {e}")
 
 def chaos_loop():
     """Boucle principale du chaos"""
@@ -132,7 +148,7 @@ def chaos_loop():
     save_window_positions()
     
     # Liste des actions possibles
-    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger, 3=curseur, 4=écran noir, 5=Google, 6=notification
+    all_actions = [1, 2, 3, 4, 5, 6]  # 1=fermer, 2=bouger, 3=curseur, 4=écran noir, 5=Google, 6=Discord
     actions_to_do = all_actions.copy()
     
     while running:
@@ -154,7 +170,7 @@ def chaos_loop():
             elif action == 5 and running:
                 open_google()
             elif action == 6 and running:
-                show_virus_notification()
+                quit_discord_call()
         except Exception as e:
             print(f"Erreur action {action}: {e}")
         
@@ -177,7 +193,7 @@ def restore_windows():
                 width = right - left
                 height = bottom - top
                 
-                user32.SetWindowPos(hwnd, HWND_TOP, left, top, width, height, 0)
+                user32.MoveWindow(hwnd, left, top, width, height, True)
                 print(f"✓ Restauré: {info['title']}")
                 time.sleep(0.5)
             except:
@@ -230,7 +246,7 @@ def main():
     print("=" * 50)
     print("🎮 PRANK CHAOS DÉMARRÉ!")
     print("=" * 50)
-    print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google / Notifications")
+    print("Actions: Fermeture / Déplacement / Curseur / Écran noir / Google / Discord")
     print("Délai: 10 secondes entre chaque action (TEST)")
     print("Bouton STOP: Indestructible!")
     print("=" * 50)
